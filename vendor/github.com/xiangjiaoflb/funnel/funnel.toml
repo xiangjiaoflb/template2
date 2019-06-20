@@ -1,0 +1,118 @@
+# Sample config file
+# The values mentioned are the default values
+
+[logging]
+# The directory to store the log files
+directory = "log"
+# The name of the current log file
+active_file_name = "out.log"
+# Write standard output
+write_output = false
+
+# File will be rotated whenever any one of these conditions are met
+[rotation]
+# Max no. of lines beyond which the file will rotate
+max_lines = 100000 # hundred thousand
+# Max no. of bytes written to a file beyond which it will rotate
+max_file_size_bytes = 5000000 # 5MB
+
+# The time interval after which the buffer will be flushed to the output target.
+# For some targets, flushing doesn't make sense. It becomes a no-op then.
+# Other targets have in-built flush frequency. It can be configured in that section.
+[flushing]
+time_interval_secs = 5
+
+[rollup]
+# Specify file rename policy.
+# Values accepted are
+# timestamp - rotated files will be named with the timestamp at the moment of rotation
+# serial - rotated files will be named serially in an increasing sequence
+file_rename_policy = "timestamp"
+# The maximum age of a file beyond which it will be removed
+# Suffix must be either d(days) or h(hours)
+max_age = "30d"
+# The maximum no. of files to keep in the log directory
+# Older files will be deleted first
+max_count = 100
+# Whether to gzip the rolled over files or not
+gzip = false
+
+[misc]
+# Populate the following variable if you want to
+# prepend your log line with a predefined text.
+# There are some template values you can use too.
+# {{.RFC822Timestamp}} expands to a timestamp in RFC822 format
+# {{.ISO8601Timestamp}} expands to a timestamp in ISO8601 format
+# {{.UnixTimestamp}} expands to a unix epoch timestamp to nanosecond precision
+#
+# Example -
+# prepend_value = "[app_name]- "
+# prepend_value = "[app_name] {{.RFC822Timestamp}}- "
+prepend_value = ""
+
+# Specifies the output target to send the logs to. Uncomment the output you want.
+# You can omit this section if you are just logging to files.
+
+# Kafka output example
+# [target]
+# name = "kafka"
+# brokers = ["host1:port", "host2:port"]
+# topic = "testtopic"
+# clientID = "funnel"
+# You need not set the below settings. They will be set to kafka default values if not specified
+# flush_frequency_secs = 5 # Best-effort frequency of flushing messages
+# batch_size = 10 # Best-effort num of messages to trigger a flush
+# max_retries = 3 # The total number of times to retry sending a message
+# write_timeout_secs = 30 # How long to wait for a transmit.
+
+# Redis output example
+# [target]
+# name = "redis"
+# host = "localhost:6379"
+# password = "" # If no password is set, keep it blank
+# channel = "test" # Specify the channel to publish to
+
+# ElasticSearch output example
+# P.S. Since ES takes json objects, log lines have to be in json.
+# eg lines-
+# {"User": "bacon", "Message": "i will be back !"}
+# {"User": "tea", "Message": "Open the bifrost !"}
+# [target]
+# name = "elasticsearch"
+# nodes = ["http://host1:port", "http://host2:port"]
+# index = "testindex"
+# type = "testtype"
+# You can set the username and password to blank if you are not using basic auth
+# username = "testuser"
+# password = "testpass"
+
+# InfluxDB output example
+# P.S. InfluxDB has the concept of tags and fields. Log lines have to be in this format -
+# {"tags": {"tag1": "value1", "tag2": "other_value1"}, "fields": {"field1": 10, "field2": 20}}
+# {"tags": {"tag1": "value2", "tag2": "other_value2"}, "fields": {"field1": 11, "field2": 21}}
+# [target]
+# name = "influxdb"
+# host = "http://localhost:8086" # or "localhost:8089" in case of udp
+# db = "testdb" # only valid for http. For udp, database if taken from influxDB config
+# protocol = "http" # options are http, udp
+# metric = "testmetric"
+# username = "testuser"
+# password = "testpass"
+# time_precision = "s" # options are "ns", "us" (or "µs"), "ms", "s", "m", "h"
+
+# AWS S3 output example
+# P.S. Files in s3 are named with the current timestamp
+# [target]
+# name = "s3"
+# bucket = "bucket-name"
+# region = "us-west-2"
+
+# NATS output example
+# [target]
+# You can omit the user and password field if you don't have authentication set up
+# name = "nats"
+# host = "localhost"
+# port = "4222"
+# subject = "testsub"
+# user = "testuser"
+# password = "testpass"
